@@ -1,0 +1,49 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [main]
+  # Optional: Trigger when backend or frontend repos change
+  repository_dispatch:
+    types: [backend-updated, frontend-updated]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout deployment repo
+      uses: actions/checkout@v3
+
+    - name: Add droplet to known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+    - name: Deploy to droplet
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.DROPLET_IP }}
+        username: ${{ secrets.DROPLET_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /home/deploy/purrvelous-deploy
+
+          # Pull latest deployment configuration
+          git pull origin main
+          
+          # Create .env file with secrets
+          cat > .env << EOF
+          DATABASE_URL="postgresql://purrpurr:meowmeowmeow@db:5432/purrvelous?schema=public"
+          JWT_SECRET="${{ secrets.JWT_SECRET }}"
+          FRONTEND_ORIGIN="http://localhost:3000"
+          NODE_ENV=production
+          JWT_EXPIRES_IN=1d
+          PORT=8080
+          EOF
+
+          # Stop and rebuild containers
+          docker-compose down
+          docker-compose up -d --build
+
+          # Clean up old images
+          docker image prune -f

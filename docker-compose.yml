@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: purrvelous-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: purrpurr
+      POSTGRES_PASSWORD: meowmeowmeow
+      POSTGRES_DB: purrvelous
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - purrvelous-network
+
+  # Backend (Express API)
+  backend:
+    build: 
+      context: .
+      dockerfile: purrveous-backend/Dockerfile
+    container_name: purrvelous-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "postgresql://purrpurr:meowmeowmeow@db:5432/purrvelous?schema=public"
+      JWT_SECRET: "${JWT_SECRET}"
+      FRONTEND_ORIGIN: "http://localhost:3000"
+      NODE_ENV: production
+      JWT_EXPIRES_IN: 1d
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - purrvelous-network
+
+  # Frontend (React App)
+  frontend:
+    build:
+      context: .
+      dockerfile: purrvelous-frontend/Dockerfile
+    container_name: purrvelous-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - purrvelous-backend
+    networks:
+      - purrvelous-network
+
+volumes:
+  db_data:
+
+networks:
+  purrvelous-network:
+    driver: bridge
