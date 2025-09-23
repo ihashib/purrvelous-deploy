@@ -1,0 +1,6 @@
+[submodule "purrveous-backend"]
+	path = purrveous-backend
+	url = git@github.com:ihashib/purrvelous-backend.git
+[submodule "purrvelous-frontend"]
+	path = purrvelous-frontend
+	url = git@github.com:ihashib/purrvelous-frontend.git

@@ -3,5 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/../.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/purrvelous-deploy" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/purrvelous-frontend" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/purrveous-backend" vcs="Git" />
   </component>
 </project>
