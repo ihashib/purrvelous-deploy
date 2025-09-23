@@ -19,7 +19,7 @@ services:
   backend:
     build: 
       context: .
-      dockerfile: purrveous-backend/Dockerfile
+      dockerfile: purrvelous-backend/Dockerfile
     container_name: purrvelous-backend
     restart: unless-stopped
     environment:
