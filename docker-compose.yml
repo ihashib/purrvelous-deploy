@@ -42,7 +42,7 @@ services:
       context: .
       dockerfile: purrvelous-frontend/Dockerfile
       args:
-        VITE_API_URL: "http://167.99.76.45:8080"  # ← ADD THIS LINE
+        VITE_API_URL: "/"
     container_name: purrvelous-frontend
     restart: unless-stopped
     ports:
@@ -51,6 +51,8 @@ services:
       - backend
     networks:
       - purrvelous-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   db_data:
