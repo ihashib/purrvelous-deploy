@@ -13,7 +13,9 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - purrvelous-network
+      purrvelous-network:
+        aliases:
+          - db
 
   # Backend (Express API)
   backend:
@@ -34,7 +36,9 @@ services:
     depends_on:
       - db
     networks:
-      - purrvelous-network
+      purrvelous-network:
+        aliases:
+          - backend
 
   # Frontend (React App)
   frontend:
@@ -42,7 +46,7 @@ services:
       context: .
       dockerfile: purrvelous-frontend/Dockerfile
       args:
-        VITE_API_URL: "/"
+        VITE_API_URL: "/"  # Use relative paths
     container_name: purrvelous-frontend
     restart: unless-stopped
     ports:
@@ -50,9 +54,9 @@ services:
     depends_on:
       - backend
     networks:
-      - purrvelous-network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      purrvelous-network:
+        aliases:
+          - frontend
 
 volumes:
   db_data:
